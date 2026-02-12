@@ -1,0 +1,26 @@
+# --- PYTORCH CON CUDA 11.8 (Fondamentale per la GPU) ---
+--extra-index-url https://download.pytorch.org/whl/cu118
+torch
+torchvision
+torchaudio
+
+# --- NVIDIA NEMO ---
+# Cython serve per compilare alcune parti di NeMo
+cython
+nemo_toolkit[asr]
+
+# --- AUDIO & DATA PROCESSING ---
+librosa
+soundfile
+pydub
+gTTS
+numpy
+matplotlib
+tqdm
+
+# --- TOOLS ---
+jupyter
+jupyterlab
+ipod
+pytorch-lightning
+omegaconf
