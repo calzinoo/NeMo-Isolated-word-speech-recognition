@@ -15,7 +15,7 @@ def normalize_audio():
     print(f"Target: Mono, {config.SAMPLE_RATE} Hz, {config.TARGET_LEN_MS} ms, formato WAV")
 
     for folder in config.MY_LABELS:
-        folder_path = os.path.join(config.BASE_DIR, folder)
+        folder_path = os.path.join(config.RAW_DATA_DIR, folder)
         if not os.path.exists(folder_path):
             print(f"Attenzione: cartella {folder_path} non trovata, salto...")
             continue

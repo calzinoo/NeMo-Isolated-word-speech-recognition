@@ -4,7 +4,7 @@ from pydub.silence import split_on_silence
 import config
 
 def slice_folder(class_name):
-    folder_path = os.path.join(config.RAW_FOLDER, class_name)
+    folder_path = os.path.join(config.RAW_DATA_DIR, class_name)
     print(f"Processando classe: {class_name}...")
     
     for file in os.listdir(folder_path):
@@ -14,7 +14,7 @@ def slice_folder(class_name):
         audio = AudioSegment.from_file(file_path)
         
         # Dividi basandoti sul silenzio (dbFS è il volume)
-        chunks = split_on_silence(audio, min_silence_len=300, silence_thresh=-40)
+        chunks = split_on_silence(audio, min_silence_len=300, silence_thresh=-40, keep_silence=100)
         
         for i, chunk in enumerate(chunks):
             # Normalizza durata a 1 secondo (aggiunge silenzio se serve)
@@ -38,5 +38,5 @@ def slice_folder(class_name):
 
 # Lancia per background
 for label in ["destra", "sinistra", "salta", "striscia", "background"]:
-    if os.path.exists(os.path.join(config.RAW_FOLDER, label)):
+    if os.path.exists(os.path.join(config.RAW_DATA_DIR, label)):
         slice_folder(label)

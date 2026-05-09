@@ -14,7 +14,7 @@ FINAL_MODEL_PATH = os.path.join(MODEL_DIR, "dino_finetuned.nemo")
 
 # --- PARAMETRI AUDIO ---
 SAMPLE_RATE = 16000
-TARGET_LEN_MS = 1000  # 1 secondo
+TARGET_LEN_MS = 1500  # 1.5 secondi
 CHUNK_SIZE = 1024
 
 # --- PARAMETRI MODELLO E TRAINING ---
