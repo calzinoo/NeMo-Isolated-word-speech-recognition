@@ -12,22 +12,22 @@ __pycache__/
 *.pyd
 
 # --- DATI ---
-# Ignoriamo i dati grezzi pesanti
+# Ignoriamo i dati grezzi e formattati (file audio pesanti)
 data/raw/
 data/processed/
-# Manteniamo i manifest json perché sono leggeri e utili
-# data/manifests/ 
+# Se vuoi ignorare anche i json generati:
+# data/manifests/
 
-# --- MODELLI ---
-# Ignora tutti i file .nemo e checkpoint...
+# --- MODELLI E CHECKPOINT (Molto pesanti!) ---
 models/
+checkpoints/
 *.nemo
 *.ckpt
 *.pth
-# ...MA includi specificamente il tuo modello finetunato!
+# ...MA includi specificamente il tuo modello finale (opzionale, se è < 100MB)
 !models/dino_finetuned.nemo
 
-# --- LOG E TEMP ---
+# --- LOG E TEMP (Generati da NeMo e PyTorch Lightning) ---
 lightning_logs/
 nemo_experiments/
 *.log
@@ -35,11 +35,13 @@ nemo_experiments/
 *.mp3
 temp_*
 
+# --- CONFIG (Opzionale) ---
+# Se non vuoi pushare la configurazione scaricata dal modello base
+conf/
+
 # --- IDE & SYSTEM ---
 .vscode/
 .idea/
 .DS_Store
 Thumbs.db
 .ipynb_checkpoints/
-
-
