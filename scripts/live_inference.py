@@ -4,17 +4,9 @@ import sounddevice as sd
 import numpy as np
 import time
 from colorama import Fore, Style, init
-
+import config
 # Inizializza colori
 init(autoreset=True)
-
-# --- CONFIGURAZIONE ---
-MODEL_PATH = "models/dino_finetuned.nemo" 
-SAMPLE_RATE = 16000
-CHUNK_DURATION = 0.1      # Quanto audio leggiamo alla volta (0.1s)
-WINDOW_DURATION = 1.5     # Quanto audio "ricorda" il modello (1.5s)
-THRESHOLD = 0.85          # Sicurezza minima (0-1) per accettare il comando
-COOLDOWN_FRAMES = 10      # Quanti cicli ignorare dopo un comando rilevato
 
 def main():
     # 1. Carica il Modello
@@ -27,7 +19,7 @@ def main():
 
     print("Caricamento modello (potrebbe volerci un attimo)...")
     try:
-        model = nemo_asr.models.EncDecClassificationModel.restore_from(MODEL_PATH)
+        model = nemo_asr.models.EncDecClassificationModel.restore_from(config.FINAL_MODEL_PATH)
         model.eval()
         model.to(device)
     except Exception as e:
@@ -40,8 +32,8 @@ def main():
 
     # 2. Prepara il Buffer (Memoria Scorrevole)
     # Calcoliamo quanti 'campioni' ci stanno in 1.5 secondi
-    buffer_len = int(SAMPLE_RATE * WINDOW_DURATION)
-    chunk_len = int(SAMPLE_RATE * CHUNK_DURATION)
+    buffer_len = int(config.SAMPLE_RATE * config.LIVE_WINDOW_DURATION)
+    chunk_len = int(config.SAMPLE_RATE * config.LIVE_CHUNK_DURATION)
     
     # Inizializza buffer vuoto (silenzio)
     audio_buffer = np.zeros(buffer_len, dtype=np.float32)
@@ -54,7 +46,7 @@ def main():
     # 3. Loop in Tempo Reale
     try:
         # Apre il microfono
-        with sd.InputStream(channels=1, samplerate=SAMPLE_RATE, blocksize=chunk_len) as stream:
+        with sd.InputStream(channels=1, samplerate=config.SAMPLE_RATE, blocksize=chunk_len) as stream:
             while True:
                 # Leggi un pezzetto di audio (es. 0.1s)
                 data, overflow = stream.read(chunk_len)
@@ -90,11 +82,11 @@ def main():
 
                 # FILTRO
                 # Stampiamo solo se NON è background e se siamo sicuri
-                if pred_label != "_background_" and pred_label != "background" and confidence > THRESHOLD:
+                if pred_label != "_background_" and pred_label != "background" and confidence > config.LIVE_THRESHOLD:
                     print(f"{Fore.GREEN}RILEVATO: {Style.BRIGHT}{pred_label.upper()} {Fore.WHITE}(Sicurezza: {confidence:.2f})")
                     
                     # Attiva il cooldown per non ripeterlo subito
-                    cooldown = COOLDOWN_FRAMES
+                    cooldown = config.COOLDOWN_FRAMES
                 else:
                     # Stampa un puntino per far vedere che è vivo (opzionale)
                     print(".", end="", flush=True)

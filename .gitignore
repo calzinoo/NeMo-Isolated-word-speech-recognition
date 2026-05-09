@@ -1,0 +1,45 @@
+# --- AMBIENTE VIRTUALE ---
+nemo_env/
+.venv/
+env/
+venv/
+ENV/
+
+# --- PYTHON CACHE ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# --- DATI ---
+# Ignoriamo i dati grezzi pesanti
+data/raw/
+data/processed/
+# Manteniamo i manifest json perché sono leggeri e utili
+# data/manifests/ 
+
+# --- MODELLI ---
+# Ignora tutti i file .nemo e checkpoint...
+models/
+*.nemo
+*.ckpt
+*.pth
+# ...MA includi specificamente il tuo modello finetunato!
+!models/dino_finetuned.nemo
+
+# --- LOG E TEMP ---
+lightning_logs/
+nemo_experiments/
+*.log
+*.wav
+*.mp3
+temp_*
+
+# --- IDE & SYSTEM ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+.ipynb_checkpoints/
+
+

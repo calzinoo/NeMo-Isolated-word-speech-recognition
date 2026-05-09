@@ -1,17 +1,21 @@
 import os
 from pydub import AudioSegment
+import config
 
-BASE_DIR = "data/raw"
-TARGET_FOLDER = ["salta", "striscia", "rotola", "background"]
-TARGET_LEN = 1000  # 1 secondo in millisecondi
-TARGET_SR = 16000  # 16 kHz
+def detect_leading_silence(sound, silence_threshold = -40.0, chunk_size = 10):
+    #trova la durata del silenzio all'inizio dell'audio
+    trim_ms = 0  # ms
+    assert chunk_size > 0 #evita loop infinito
+    while sound[trim_ms:trim_ms+chunk_size].dBFS < silence_threshold and trim_ms < len(sound):
+        trim_ms += chunk_size
+    return trim_ms
 
 def normalize_audio():
     print(f"--- INIZIO NORMALIZZAZIONE AUDIO ---")
-    print(f"Target: Mono, {TARGET_SR} Hz, {TARGET_LEN} ms, formato WAV")
+    print(f"Target: Mono, {config.SAMPLE_RATE} Hz, {config.TARGET_LEN_MS} ms, formato WAV")
 
-    for folder in TARGET_FOLDER:
-        folder_path = os.path.join(BASE_DIR, folder)
+    for folder in config.MY_LABELS:
+        folder_path = os.path.join(config.BASE_DIR, folder)
         if not os.path.exists(folder_path):
             print(f"Attenzione: cartella {folder_path} non trovata, salto...")
             continue
@@ -30,20 +34,26 @@ def normalize_audio():
             try:
                 #caricamento
                 audio = AudioSegment.from_file(full_path)
+
+                start_trim = detect_leading_silence(audio)
+                #se c'è silenzio  taglialo
+                if( start_trim > 0):
+                    audio = audio[start_trim:]
+
                 #conversione (mono, 16kHz)
                 audio = audio.set_channels(1)
-                audio = audio.set_frame_rate(TARGET_SR)
+                audio = audio.set_frame_rate(config.SAMPLE_RATE)
                 #gestione durata
                 current_length = len(audio)
 
-                if current_length < TARGET_LEN:
+                if current_length < config.TARGET_LEN_MS:
                     #troppo corto, aggiungo silenzio
-                    silence_needed = TARGET_LEN - current_length
+                    silence_needed = config.TARGET_LEN_MS - current_length
                     silence = AudioSegment.silent(duration=silence_needed)
                     audio = audio + silence
-                elif current_length > TARGET_LEN:
+                elif current_length > config.TARGET_LEN_MS:
                     #troppo lungo, taglio
-                    audio = audio[:TARGET_LEN]
+                    audio = audio[:config.TARGET_LEN_MS]
 
                 #esportazione in WAV
                 new_filename = os.path.splitext(file)[0] + ".wav"

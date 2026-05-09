@@ -3,6 +3,7 @@ import json
 import os
 import librosa
 import argparse
+import config
 from tqdm import tqdm
 
 def create_manifest(data_dir, manifest_path):
@@ -56,8 +57,8 @@ if __name__ == "__main__":
     # python scripts/create_manifest.py
     
     # Percorsi (li adattiamo alla struttura creata prima)
-    RAW_DATA_DIR = "data/raw"
-    OUTPUT_MANIFEST = "data/manifests/train_manifest.json"
+    RAW_DATA_DIR = config.RAW_DATA_DIR
+    OUTPUT_MANIFEST = config.TRAIN_MANIFEST
     
     if not os.path.exists(RAW_DATA_DIR):
         print(f"ATTENZIONE: La cartella {RAW_DATA_DIR} non esiste ancora.")

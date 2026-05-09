@@ -6,11 +6,7 @@ import seaborn as sns
 from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
 import numpy as np
 import time
-
-# --- CONFIGURAZIONE ---
-MODEL_PATH = "models/dino_finetuned.nemo"
-TEST_MANIFEST = "data/manifests/train_manifest.json" # <--- CAMBIA CON test_manifest.json PER L'ESAME!
-BATCH_SIZE = 16
+import config
 
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
