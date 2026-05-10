@@ -1,6 +1,20 @@
-import nemo.collections.asr as nemo_asr
+import os
+import sys
+print("--- TEST 1: Inizio caricamento librerie ---")
+
 import torch
+print("--- TEST 2: PyTorch caricato con successo ---")
+
 import sounddevice as sd
+print("--- TEST 3: SoundDevice (Microfono) caricato con successo ---")
+
+try:
+    import nemo.collections.asr as nemo_asr
+    print("--- TEST 4: NeMo caricato! ---")
+except Exception as e:
+    print(f"--- ERRORE CRITICO IN NEMO: {e} ---")
+    sys.exit(1)
+
 import numpy as np
 import time
 from colorama import Fore, Style, init
