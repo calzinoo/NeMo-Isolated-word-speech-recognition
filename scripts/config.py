@@ -14,12 +14,12 @@ FINAL_MODEL_PATH = os.path.join(MODEL_DIR, "dino_finetuned.nemo")
 
 # --- PARAMETRI AUDIO ---
 SAMPLE_RATE = 16000
-TARGET_LEN_MS = 1500  # 1.5 secondi
+TARGET_LEN_MS = 1000  # 1.0 secondi
 CHUNK_SIZE = 1024
 
 # --- PARAMETRI MODELLO E TRAINING ---
 # Qui aggiungiamo i tuoi nuovi comandi!
-MY_LABELS = ["destra", "sinistra", "salta", "striscia", "background"]
+MY_LABELS = ["destra", "sinistra", "salta", "striscia","spacca", "background"]
 PRETRAINED_MODEL = "commandrecognition_en_matchboxnet3x1x64_v2"
 
 BATCH_SIZE = 32
@@ -28,6 +28,6 @@ LEARNING_RATE = 0.005
 
 # --- PARAMETRI INFERENZA LIVE ---
 LIVE_THRESHOLD = 0.85          # Sicurezza minima per attivare il comando
-LIVE_WINDOW_DURATION = 1.5     # Secondi di audio analizzati ad ogni ciclo
+LIVE_WINDOW_DURATION = 1.0     # Secondi di audio analizzati ad ogni ciclo
 LIVE_CHUNK_DURATION = 0.1      # Frequenza di aggiornamento (0.1s)
 COOLDOWN_FRAMES = 10           # Pausa dopo un comando rilevato

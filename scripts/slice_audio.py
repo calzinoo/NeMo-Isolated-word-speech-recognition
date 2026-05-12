@@ -8,7 +8,7 @@ def slice_folder(class_name):
     print(f"Processando classe: {class_name}...")
     
     for file in os.listdir(folder_path):
-        if not file.endswith(('.wav', '.m4a', '.mp3')): continue
+        if not file.endswith(('.wav', '.m4a', '.mp3', '.ogg')): continue
         
         file_path = os.path.join(folder_path, file)
         audio = AudioSegment.from_file(file_path)
@@ -37,6 +37,6 @@ def slice_folder(class_name):
         os.remove(file_path)
 
 # Lancia per background
-for label in ["destra", "sinistra", "salta", "striscia", "background"]:
+for label in config.MY_LABELS:
     if os.path.exists(os.path.join(config.RAW_DATA_DIR, label)):
         slice_folder(label)

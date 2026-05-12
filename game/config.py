@@ -19,7 +19,7 @@ CHUNK_SIZE = 1024
 
 # --- PARAMETRI MODELLO E TRAINING ---
 # Qui aggiungiamo i tuoi nuovi comandi!
-MY_LABELS = ["destra", "sinistra", "salta", "striscia", "background"]
+MY_LABELS = ["destra", "sinistra", "salta", "striscia", "spacca", "background"]
 PRETRAINED_MODEL = "commandrecognition_en_matchboxnet3x1x64_v2"
 
 BATCH_SIZE = 32
