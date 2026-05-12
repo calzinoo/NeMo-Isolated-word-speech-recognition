@@ -12,9 +12,16 @@ def slice_folder(class_name):
         
         file_path = os.path.join(folder_path, file)
         audio = AudioSegment.from_file(file_path)
+
+        if class_name == "background":
+            # Tagliamo a fette esatte da 1 secondo senza cercare pause
+            chunks = [audio[i:i + config.TARGET_LEN_MS] for i in range(0, len(audio), config.TARGET_LEN_MS)]
+            # Scartiamo l'ultimissimo pezzetto se dura meno di 1 secondo
+            chunks = [c for c in chunks if len(c) == config.TARGET_LEN_MS]
+        else:
+            # Per le parole parlate, continuiamo a tagliare intelligentemente sul silenzio
+            chunks = split_on_silence(audio, min_silence_len=300, silence_thresh=-40, keep_silence=100)
         
-        # Dividi basandoti sul silenzio (dbFS è il volume)
-        chunks = split_on_silence(audio, min_silence_len=300, silence_thresh=-40, keep_silence=100)
         
         for i, chunk in enumerate(chunks):
             # Normalizza durata a 1 secondo (aggiunge silenzio se serve)
