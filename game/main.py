@@ -4,7 +4,7 @@ import random
 import sys
 import config as config
 from player import Player
-from obstacle import LowObstacle, HighObstacle, BusObstacle
+from obstacle import LowObstacle, HighObstacle, BusObstacle, BreakableObstacle
 from coin import Coin
 
 pygame.init()
@@ -47,6 +47,9 @@ def main():
                     if event.key == pygame.K_DOWN and player.state == "RUNNING":
                         player.state = "DUCKING"
                         player.timer = config.DUCK_DURATION
+                    if event.key == pygame.K_SPACE and player.state == "RUNNING": 
+                        player.state = "SMASHING"                                 
+                        player.timer = config.SMASH_DURATION
 
         if not game_over:
             player.update()
@@ -55,7 +58,7 @@ def main():
             spawn_timer -= 1
             if spawn_timer <= 0:
                 random_lane = random.randint(0, len(config.GAME_LANES) - 1)
-                ObstacleClass = random.choice([LowObstacle, HighObstacle, BusObstacle])
+                ObstacleClass = random.choice([LowObstacle, HighObstacle, BusObstacle, BreakableObstacle])
                 obstacles.append(ObstacleClass(random_lane))
                 spawn_timer = max(30, 90 - (score // 10)) # Aumenta difficoltà
 
@@ -83,7 +86,16 @@ def main():
                 obs.update()
                 
                 if player.rect.colliderect(obs.rect):
-                    if obs.type == "HIGH" and player.state == "DUCKING":
+                    # Se è un muro e tu stai spaccando, e il muro non è già rotto...
+                    if obs.type == "BREAKABLE" and player.state == "SMASHING":
+                        if getattr(obs, 'broken', False) == False:
+                            obs.broken = True
+                            score += 15 # Ti dà punti extra per averlo spaccato!
+                    # Se il muro è già rotto, ci passi attraverso senza morire
+                    elif obs.type == "BREAKABLE" and getattr(obs, 'broken', False) == True:
+                        pass
+                    # Logica classica per gli altri ostacoli
+                    elif obs.type == "HIGH" and player.state == "DUCKING":
                         pass 
                     elif obs.type == "LOW" and player.state == "JUMPING":
                         pass 

@@ -12,7 +12,7 @@ class Player:
         
     def update(self):
         # Ripristina lo stato normale alla fine del timer
-        if self.state in ["JUMPING", "DUCKING"]:
+        if self.state in ["JUMPING", "DUCKING", "SMASHING"]:
             self.timer -= 1
             if self.timer <= 0:
                 self.state = "RUNNING"
@@ -35,5 +35,6 @@ class Player:
         color = config.COLOR_PLAYER_RUN
         if self.state == "JUMPING": color = config.COLOR_PLAYER_JUMP
         if self.state == "DUCKING": color = config.COLOR_PLAYER_DUCK
+        if self.state == "SMASHING": color = config.COLOR_PLAYER_SMASH
         pygame.draw.rect(surface, color, self.rect)
         

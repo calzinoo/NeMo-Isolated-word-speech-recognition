@@ -60,6 +60,7 @@ def main():
                 # 3. Gestione Cooldown
                 if cooldown > 0:
                     cooldown -= 1
+                    audio_buffer.fill(0)
                     continue
 
                 # 4. Inferenza immediata (10 volte al secondo!)
@@ -86,8 +87,11 @@ def main():
                         pydirectinput.press('right')
                     elif pred_label == "sinistra":
                         pydirectinput.press('left')
+                    elif pred_label == "spacca":          
+                        pydirectinput.press('space')
                     
                     cooldown = config.COOLDOWN_FRAMES
+                    audio_buffer.fill(0)
 
     except KeyboardInterrupt:
         print(Fore.RED + "\nSpegnimento motore vocale...")
