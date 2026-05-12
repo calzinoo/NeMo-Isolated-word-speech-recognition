@@ -19,7 +19,6 @@ data/processed/
 # data/manifests/
 
 # --- MODELLI E CHECKPOINT (Molto pesanti!) ---
-models/
 checkpoints/
 *.nemo
 *.ckpt
