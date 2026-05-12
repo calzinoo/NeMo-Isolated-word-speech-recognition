@@ -1,11 +1,11 @@
 import pygame
-import game_config
+import config as config
 
 
 class Player:
     def __init__(self):
         self.lane = 1 # Parte nella corsia centrale (indice 1)
-        self.y = game_config.GAME_HEIGHT - 150
+        self.y = config.GAME_HEIGHT - 150
         self.state = "RUNNING" # Stati: RUNNING, JUMPING, DUCKING
         self.timer = 0
         self.rect = pygame.Rect(0, 0, 60, 60)
@@ -18,7 +18,7 @@ class Player:
                 self.state = "RUNNING"
                 
         # Aggiorna posizione X in base alla corsia
-        self.rect.centerx = game_config.GAME_LANES[self.lane]
+        self.rect.centerx = config.GAME_LANES[self.lane]
         self.rect.bottom = self.y
 
         # Cambia forma e posizione Y
@@ -32,8 +32,8 @@ class Player:
             self.rect.bottom = self.y
 
     def draw(self, surface):
-        color = game_config.COLOR_PLAYER_RUN
-        if self.state == "JUMPING": color = game_config.COLOR_PLAYER_JUMP
-        if self.state == "DUCKING": color = game_config.COLOR_PLAYER_DUCK
+        color = config.COLOR_PLAYER_RUN
+        if self.state == "JUMPING": color = config.COLOR_PLAYER_JUMP
+        if self.state == "DUCKING": color = config.COLOR_PLAYER_DUCK
         pygame.draw.rect(surface, color, self.rect)
         

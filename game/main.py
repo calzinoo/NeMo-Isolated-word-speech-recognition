@@ -2,13 +2,13 @@
 import pygame
 import random
 import sys
-import game_config
+import config as config
 from player import Player
 from obstacle import LowObstacle, HighObstacle, BusObstacle
 from coin import Coin
 
 pygame.init()
-screen = pygame.display.set_mode((game_config.GAME_WIDTH, game_config.GAME_HEIGHT))
+screen = pygame.display.set_mode((config.GAME_WIDTH, config.GAME_HEIGHT))
 pygame.display.set_caption("Voice Runner AI")
 clock = pygame.time.Clock()
 
@@ -25,7 +25,7 @@ def main():
     font = pygame.font.SysFont("Arial", 36)
 
     while True:
-        screen.fill(game_config.COLOR_BG)
+        screen.fill(config.COLOR_BG)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -39,14 +39,14 @@ def main():
                 else:
                     if event.key == pygame.K_LEFT and player.lane > 0:
                         player.lane -= 1
-                    if event.key == pygame.K_RIGHT and player.lane < len(game_config.GAME_LANES) - 1:
+                    if event.key == pygame.K_RIGHT and player.lane < len(config.GAME_LANES) - 1:
                         player.lane += 1
                     if event.key == pygame.K_UP and player.state == "RUNNING":
                         player.state = "JUMPING"
-                        player.timer = game_config.JUMP_DURATION
+                        player.timer = config.JUMP_DURATION
                     if event.key == pygame.K_DOWN and player.state == "RUNNING":
                         player.state = "DUCKING"
-                        player.timer = game_config.DUCK_DURATION
+                        player.timer = config.DUCK_DURATION
 
         if not game_over:
             player.update()
@@ -54,7 +54,7 @@ def main():
             # --- GENERAZIONE OSTACOLI ---
             spawn_timer -= 1
             if spawn_timer <= 0:
-                random_lane = random.randint(0, len(game_config.GAME_LANES) - 1)
+                random_lane = random.randint(0, len(config.GAME_LANES) - 1)
                 ObstacleClass = random.choice([LowObstacle, HighObstacle, BusObstacle])
                 obstacles.append(ObstacleClass(random_lane))
                 spawn_timer = max(30, 90 - (score // 10)) # Aumenta difficoltà
@@ -72,10 +72,10 @@ def main():
                 
                 # Se il giocatore tocca la moneta...
                 if player.rect.colliderect(c.rect):
-                    score += game_config.COIN_REWARD # Prendi punti!
+                    score += config.COIN_REWARD # Prendi punti!
                     coins.remove(c)                  # La moneta scompare!
                 # Se la moneta esce dallo schermo...
-                elif c.rect.top > game_config.GAME_HEIGHT:
+                elif c.rect.top > config.GAME_HEIGHT:
                     coins.remove(c)
 
             # --- AGGIORNAMENTO E COLLISIONE OSTACOLI ---
@@ -91,16 +91,16 @@ def main():
                         game_over = True
                 
                 # Punti per la sopravvivenza (10 punti ogni volta che eviti un ostacolo)
-                if obs.rect.top > game_config.GAME_HEIGHT - 150 and not obs.passed:
+                if obs.rect.top > config.GAME_HEIGHT - 150 and not obs.passed:
                     obs.passed = True
-                    score += game_config.SCORE_REWARD
+                    score += config.SCORE_REWARD
                 
-                if obs.rect.top > game_config.GAME_HEIGHT:
+                if obs.rect.top > config.GAME_HEIGHT:
                     obstacles.remove(obs)
 
         # --- DISEGNO A SCHERMO ---
-        pygame.draw.line(screen, game_config.COLOR_LINE, (200, 0), (200, game_config.GAME_HEIGHT), 2)
-        pygame.draw.line(screen, game_config.COLOR_LINE, (400, 0), (400, game_config.GAME_HEIGHT), 2)
+        pygame.draw.line(screen, config.COLOR_LINE, (200, 0), (200, config.GAME_HEIGHT), 2)
+        pygame.draw.line(screen, config.COLOR_LINE, (400, 0), (400, config.GAME_HEIGHT), 2)
 
         # Disegna gli oggetti nell'ordine giusto (prima monete, poi ostacoli, poi giocatore)
         for c in coins:
@@ -111,15 +111,15 @@ def main():
         
         player.draw(screen)
 
-        score_text = font.render(f"Punti: {score}", True, game_config.COLOR_LINE)
+        score_text = font.render(f"Punti: {score}", True, config.COLOR_LINE)
         screen.blit(score_text, (10, 10))
 
         if game_over:
-            over_text = font.render("GAME OVER! Premi SPAZIO", True, game_config.COLOR_LINE)
-            screen.blit(over_text, (game_config.GAME_WIDTH//2 - over_text.get_width()//2, game_config.GAME_HEIGHT//2))
+            over_text = font.render("GAME OVER! Premi SPAZIO", True, config.COLOR_LINE)
+            screen.blit(over_text, (config.GAME_WIDTH//2 - over_text.get_width()//2, config.GAME_HEIGHT//2))
 
         pygame.display.flip()
-        clock.tick(game_config.GAME_FPS)
+        clock.tick(config.GAME_FPS)
 
 if __name__ == "__main__":
     main()
