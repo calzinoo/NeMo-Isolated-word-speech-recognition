@@ -8,12 +8,12 @@ def slice_folder(class_name):
     print(f"Processando classe: {class_name}...")
     
     for file in os.listdir(folder_path):
-        if not file.endswith(('.wav', '.m4a', '.mp3', '.ogg')): continue
+        if not file.endswith(('.wav', '.m4a', '.mp3', '.ogg', '.wav')): continue
         
         file_path = os.path.join(folder_path, file)
         audio = AudioSegment.from_file(file_path)
 
-        if class_name == "background":
+        if class_name == "background" or class_name == "unknown":
             # Tagliamo a fette esatte da 1 secondo senza cercare pause
             chunks = [audio[i:i + config.TARGET_LEN_MS] for i in range(0, len(audio), config.TARGET_LEN_MS)]
             # Scartiamo l'ultimissimo pezzetto se dura meno di 1 secondo
