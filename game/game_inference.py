@@ -76,7 +76,7 @@ def main():
                 pred_label = labels[pred_idx]
 
                 # 5. Esecuzione Comandi
-                if pred_label not in ["_background_", "background"] and confidence > config.LIVE_THRESHOLD:
+                if pred_label not in ["_background_", "background", "unknown"] and confidence > config.LIVE_THRESHOLD:
                     print(f"{Fore.GREEN}RILEVATO: {Style.BRIGHT}{pred_label.upper()} {Fore.WHITE}(Sicurezza: {confidence:.2f})")
                     
                     if pred_label == "salta":
