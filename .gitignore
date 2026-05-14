@@ -23,8 +23,6 @@ checkpoints/
 *.nemo
 *.ckpt
 *.pth
-# ...MA includi specificamente il tuo modello finale (opzionale, se è < 100MB)
-!models/dino_finetuned.nemo
 
 # --- LOG E TEMP (Generati da NeMo e PyTorch Lightning) ---
 lightning_logs/

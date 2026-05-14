@@ -40,12 +40,12 @@ def main():
         print(Fore.RED + f"Errore caricamento modello! Hai fatto il training?\n{e}")
         return
 
-    # Ottieni le etichette (classi) dal modello
+    # etichette (classi) dal modello
     labels = model.cfg.labels
     print(f"Classi rilevabili: {Fore.CYAN}{labels}")
 
-    # 2. Prepara il Buffer (Memoria Scorrevole)
-    # Calcoliamo quanti 'campioni' ci stanno in 1.5 secondi
+    # Prepara il Buffer (Memoria Scorrevole)
+    # Calcola quanti 'campioni' ci stanno in 1.5 secondi
     buffer_len = int(config.SAMPLE_RATE * config.LIVE_WINDOW_DURATION)
     chunk_len = int(config.SAMPLE_RATE * config.LIVE_CHUNK_DURATION)
     
@@ -62,10 +62,10 @@ def main():
         # Apre il microfono
         with sd.InputStream(channels=1, samplerate=config.SAMPLE_RATE, blocksize=chunk_len) as stream:
             while True:
-                # Leggi un pezzetto di audio (es. 0.1s)
+                # Legge un pezzetto di audio (es. 0.1s)
                 data, overflow = stream.read(chunk_len)
                 
-                # Converti in array piatto
+                # Converte in array
                 new_audio = data.flatten().astype(np.float32)
 
                 # SCORRIMENTO (Shift):
@@ -74,7 +74,7 @@ def main():
                 # 2. Incolla il nuovo audio alla fine
                 audio_buffer[-chunk_len:] = new_audio
 
-                # Se siamo in "pausa" dopo un comando, saltiamo l'analisi
+                # Se è in "pausa" dopo un comando, saltia l'analisi
                 if cooldown > 0:
                     cooldown -= 1
                     continue
@@ -84,18 +84,17 @@ def main():
                 input_signal = torch.tensor([audio_buffer], device=device)
                 input_signal_length = torch.tensor([buffer_len], device=device)
 
-                # INFERENCE (Chiediamo al modello)
+                # INFERENCE
                 with torch.no_grad():
                     logits = model.forward(input_signal=input_signal, input_signal_length=input_signal_length)
                     probs = torch.softmax(logits, dim=-1)
                 
-                # Chi ha vinto?
                 pred_idx = torch.argmax(probs, dim=-1).item()
                 confidence = probs[0, pred_idx].item()
                 pred_label = labels[pred_idx]
 
                 # FILTRO
-                # Stampiamo solo se NON è background e se siamo sicuri
+                # Stampa solo se NON è background e se è sicuro
                 if pred_label != "_background_" and pred_label != "background" and confidence > config.LIVE_THRESHOLD:
                     print(f"{Fore.GREEN}RILEVATO: {Style.BRIGHT}{pred_label.upper()} {Fore.WHITE}(Sicurezza: {confidence:.2f})")
                     

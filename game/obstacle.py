@@ -7,24 +7,18 @@ class Obstacle:
     def __init__(self, lane):
         self.lane = lane
         self.passed = False
-        # La hitbox di base e il tipo verranno sovrascritti dalle figlie
         self.type = "BASE" 
         self.rect = pygame.Rect(0, 0, 0, 0)
 
     def update(self):
-        # Tutti gli ostacoli scendono allo stesso modo
         self.rect.y += config.GAME_SPEED
-
-    def draw(self, surface):
-        # Questo verrà personalizzato dalle classi figlie
-        pass
 
 
 # --- CLASSI FIGLIE ---
 
 class LowObstacle(Obstacle):
     def __init__(self, lane):
-        super().__init__(lane) # Chiama il costruttore della Madre
+        super().__init__(lane)
         self.type = "LOW"
         self.rect = pygame.Rect(0, -60, 60, 45)
         self.rect.centerx = config.GAME_LANES[self.lane]
@@ -54,7 +48,7 @@ class BusObstacle(Obstacle):
         super().__init__(lane)
         self.type = "BUS"
         # Il bus è lungo e spesso (100 pixel di altezza)
-        self.rect = pygame.Rect(0, -120, 60, 100) 
+        self.rect = pygame.Rect(0, -120, 60, 200) 
         self.rect.centerx = config.GAME_LANES[self.lane]
 
     def draw(self, surface):

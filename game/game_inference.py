@@ -1,7 +1,6 @@
 import os
 import sys
 
-# Disabilita JIT per evitare crash su Windows
 os.environ['NUMBA_DISABLE_JIT'] = '1'
 
 import torch
@@ -37,33 +36,29 @@ def main():
     labels = model.cfg.labels
     print(Fore.GREEN + f"Modello caricato! Etichette: {labels}")
 
-    # --- LA MAGIA: FINESTRA SCORREVOLE (SLIDING WINDOW) ---
-    buffer_len = int(config.SAMPLE_RATE * config.LIVE_WINDOW_DURATION) # Es: 1.5 secondi
-    chunk_len = int(config.SAMPLE_RATE * config.LIVE_CHUNK_DURATION)   # Es: 0.1 secondi
-    
+    buffer_len = int(config.SAMPLE_RATE * config.LIVE_WINDOW_DURATION)
+    chunk_len = int(config.SAMPLE_RATE * config.LIVE_CHUNK_DURATION)
     audio_buffer = np.zeros(buffer_len, dtype=np.float32)
+    
     cooldown = 0
+    pred_history = []
+    FRAMES_CONFERMA = 1
 
-    print(Fore.YELLOW + "\n--- IN ASCOLTO (Riflessi pronti!) ---")
+    print(Fore.YELLOW + "\n--- IN ASCOLTO ---")
 
     try:
         with sd.InputStream(channels=1, samplerate=config.SAMPLE_RATE, blocksize=chunk_len) as stream:
             while True:
-                # 1. Legge solo 0.1 secondi di audio
                 data, overflow = stream.read(chunk_len)
                 new_audio = data.flatten().astype(np.float32)
 
-                # 2. Fa scorrere il buffer e incolla l'audio nuovo alla fine
                 audio_buffer = np.roll(audio_buffer, -chunk_len)
                 audio_buffer[-chunk_len:] = new_audio
 
-                # 3. Gestione Cooldown
                 if cooldown > 0:
                     cooldown -= 1
-                    audio_buffer.fill(0)
                     continue
 
-                # 4. Inferenza immediata (10 volte al secondo!)
                 input_signal = torch.tensor([audio_buffer], device=device)
                 input_signal_length = torch.tensor([buffer_len], device=device)
 
@@ -75,28 +70,42 @@ def main():
                 confidence = probs[0, pred_idx].item()
                 pred_label = labels[pred_idx]
 
-                # 5. Esecuzione Comandi
-                if pred_label not in ["_background_", "background", "unknown"] and confidence > config.LIVE_THRESHOLD:
-                    print(f"{Fore.GREEN}RILEVATO: {Style.BRIGHT}{pred_label.upper()} {Fore.WHITE}(Sicurezza: {confidence:.2f})")
+                soglia_richiesta = config.LIVE_THRESHOLD
+
+                if pred_label == "sinistra":
+                    soglia_richiesta = 0.70
+
+                if pred_label not in ["_background_", "background", "unknown"] and confidence > soglia_richiesta:
+                    pred_history.append(pred_label)
+                else:
+                    pred_history.clear()
+
+                if len(pred_history) > FRAMES_CONFERMA:
+                    pred_history.pop(0)
+
+                if len(pred_history) == FRAMES_CONFERMA and all(x == pred_history[0] for x in pred_history):
+                    parola_confermata = pred_history[0]
+                    print(f"{Fore.GREEN}RILEVATO E CONFERMATO: {Style.BRIGHT}{parola_confermata.upper()} {Fore.WHITE}(Sicurezza: {confidence:.2f})")
                     
-                    if pred_label == "salta":
+                    if parola_confermata == "salta":
                         pydirectinput.press('up')
-                    elif pred_label == "striscia":
+                    elif parola_confermata == "striscia":
                         pydirectinput.press('down')
-                    elif pred_label == "destra":
+                    elif parola_confermata == "destra":
                         pydirectinput.press('right')
-                    elif pred_label == "sinistra":
+                    elif parola_confermata == "sinistra":
                         pydirectinput.press('left')
-                    elif pred_label == "spacca":          
+                    elif parola_confermata == "spacca":          
                         pydirectinput.press('space')
                     
                     cooldown = config.COOLDOWN_FRAMES
                     audio_buffer.fill(0)
+                    pred_history.clear() 
 
     except KeyboardInterrupt:
         print(Fore.RED + "\nSpegnimento motore vocale...")
     except Exception as e:
         print(Fore.RED + f"Errore microfono: {e}")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

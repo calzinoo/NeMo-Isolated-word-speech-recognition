@@ -1,7 +1,7 @@
 
 import os
 
-MODEL_DIR = "models"
+MODEL_DIR = "../models"
 FINAL_MODEL_PATH = os.path.join(MODEL_DIR, "dino_finetuned.nemo")
 
 
@@ -11,7 +11,7 @@ TARGET_LEN_MS = 1500  # 1.5 secondi
 CHUNK_SIZE = 1024
 
 # --- PARAMETRI INFERENZA LIVE ---
-LIVE_THRESHOLD = 0.90          # Sicurezza minima per attivare il comando
+LIVE_THRESHOLD = 0.85          # Sicurezza minima per attivare il comando
 LIVE_WINDOW_DURATION = 1.5     # Secondi di audio analizzati ad ogni ciclo
 LIVE_CHUNK_DURATION = 0.1      # Frequenza di aggiornamento (0.1s)
 COOLDOWN_FRAMES = 1           # Pausa dopo un comando rilevato
@@ -21,7 +21,7 @@ COOLDOWN_FRAMES = 1           # Pausa dopo un comando rilevato
 GAME_WIDTH = 600
 GAME_HEIGHT = 800
 GAME_FPS = 60
-GAME_SPEED = 6
+GAME_SPEED = 5
 
 # Corsie (Coordinate X del centro di ogni corsia)
 GAME_LANES = [100, 300, 500]
@@ -32,18 +32,24 @@ DUCK_DURATION = 60    # Quanti frame dura la scivolata
 SCORE_REWARD = 10     # Punti per ogni ostacolo superato
 SMASH_DURATION = 50   # Quanti frame dura la modalità "spacca"
 
+# --- CONFIGURAZIONE PERSONAGGIO (IMMAGINI) ---
+PLAYER_IMG_RUN = "sprite/player_walk1.png"
+PLAYER_IMG_JUMP = "sprite/player_jump.png"
+PLAYER_IMG_DUCK = "sprite/player_duck.png"
+PLAYER_IMG_SMASH = "sprite/player_action1.png"
+
+# Dimensione fissa delle immagini
+PLAYER_SIZE = (70, 70)
+
 # Colori (R, G, B)
 COLOR_BG = (50, 50, 50)
 COLOR_LINE = (255, 255, 255)
-COLOR_PLAYER_RUN = (0, 150, 255)  # Blu
-COLOR_PLAYER_JUMP = (0, 255, 0)   # Verde
-COLOR_PLAYER_DUCK = (150, 0, 255) # Viola
 COLOR_OBS_LOW = (255, 100, 0)
 COLOR_OBS_HIGH = (255, 0, 0)
 COLOR_OBS_BUS = (255, 200, 0)
-COLOR_PLAYER_SMASH = (255, 50, 50)  # Rosso fuoco quando spacca
-COLOR_OBS_BREAKABLE = (139, 69, 19) # Marrone (muro di legno/mattoni)
+COLOR_OBS_BREAKABLE = (139, 69, 19)
 
 # --- PARAMETRI MONETE ---
-COLOR_COIN = (255, 215, 0)  # Giallo Oro
-COIN_REWARD = 5             # Quanti punti dà una singola moneta
+COLOR_COIN = (255, 215, 0)  
+COIN_REWARD = 5             
+
